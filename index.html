@@ -113,6 +113,14 @@
         <div class="carte">
           <div class="progression-header">
             <span>📊 Ma progression aujourd'hui</span>
+            <div class="visibilite-toggle">
+              <label for="toggle-public">Visibilité :</label>
+              <input type="checkbox" id="toggle-public" />
+              <label for="toggle-public" class="toggle-label">
+                <span class="toggle-text">Privé</span>
+                <span class="toggle-text">Public</span>
+              </label>
+            </div>
             <span id="pourcentage-global" class="pourcent">0%</span>
           </div>
           <div class="barre-fond">
@@ -153,6 +161,16 @@
           <div id="habitudes-liste" class="habitudes-grille">
             <!-- Générées par todo.js à partir d'une liste prédéfinie -->
           </div>
+        </div>
+
+        <!-- Widget de contenu inspirant -->
+        <div class="carte widget-inspiration">
+          <h3 class="carte-titre">💡 Inspiration du jour</h3>
+          <blockquote id="citation-du-jour" class="citation">
+            "Le succès n'est pas final, l'échec n'est pas fatal : c'est le courage de continuer qui compte."
+            <cite>— Winston Churchill</cite>
+          </blockquote>
+          <button id="nouvelle-citation" class="btn-discret">✨ Nouvelle citation</button>
         </div>
 
       </section>

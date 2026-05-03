@@ -186,7 +186,7 @@
   position: relative;
   overflow: hidden;
   /* Tap area confortable sur mobile */
-  min-height: 80px;
+  min-height: 90px;
 }
 
 .habitude-item:active {
@@ -205,6 +205,13 @@
   color: var(--texte-secondaire);
   letter-spacing: 0.3px;
   text-transform: uppercase;
+}
+
+.habitude-frequence {
+  font-size: 9px;
+  color: var(--texte-discret);
+  text-transform: lowercase;
+  margin-top: 2px;
 }
 
 /* État : habitude cochée */
@@ -239,3 +246,55 @@
 .habitude-item:nth-child(4) { animation: entree-tache 0.2s 0.20s both; }
 .habitude-item:nth-child(5) { animation: entree-tache 0.2s 0.25s both; }
 .habitude-item:nth-child(6) { animation: entree-tache 0.2s 0.30s both; }
+
+/* ── WIDGET INSPIRATION ──────────────────────────────────── */
+.widget-inspiration {
+  text-align: center;
+  background: linear-gradient(135deg, var(--accent-doux), rgba(245, 166, 35, 0.1));
+  border: 1px solid rgba(245, 166, 35, 0.3);
+}
+
+.citation {
+  font-style: italic;
+  font-size: 15px;
+  line-height: 1.6;
+  margin: 16px 0;
+  color: var(--texte-principal);
+  position: relative;
+}
+
+.citation::before {
+  content: '"';
+  font-size: 32px;
+  color: var(--accent);
+  position: absolute;
+  top: -8px;
+  left: -16px;
+  font-family: serif;
+}
+
+.citation cite {
+  display: block;
+  margin-top: 12px;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--texte-secondaire);
+  font-style: normal;
+}
+
+.btn-discret {
+  background: none;
+  border: 1px solid var(--bordure);
+  color: var(--texte-secondaire);
+  padding: 8px 16px;
+  border-radius: var(--rayon-petit);
+  cursor: pointer;
+  font-size: 12px;
+  transition: all var(--vitesse) var(--courbe);
+}
+
+.btn-discret:hover {
+  background: var(--fond-app);
+  border-color: var(--accent);
+  color: var(--accent);
+}

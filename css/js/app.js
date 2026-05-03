@@ -41,6 +41,7 @@ window.CLES = {
   FLOPS:     'sf_flops',      /* tableau de flops */
   CHAT:      'sf_chat',       /* tableau de messages */
   SCORES:    'sf_scores',     /* { prenom: pourcentage } */
+  VISIBILITE: 'sf_visibilite', /* { prenom: boolean } */
 };
 
 

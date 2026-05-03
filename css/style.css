@@ -427,6 +427,8 @@ input[type="password"]:focus {
   font-size: 13px;
   font-weight: 600;
   color: var(--texte-secondaire);
+  flex-wrap: wrap;
+  gap: 8px;
 }
 
 .pourcent {
@@ -458,6 +460,77 @@ input[type="password"]:focus {
 @keyframes shimmer {
   0%   { background-position: 200% center; }
   100% { background-position: -200% center; }
+}
+
+/* ── TOGGLE VISIBILITÉ ────────────────────────────────────── */
+.visibilite-toggle {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 12px;
+  color: var(--texte-secondaire);
+}
+
+.visibilite-toggle input[type="checkbox"] {
+  display: none;
+}
+
+.toggle-label {
+  position: relative;
+  display: inline-block;
+  width: 50px;
+  height: 24px;
+  background: var(--bordure);
+  border-radius: 12px;
+  cursor: pointer;
+  transition: background var(--vitesse) var(--courbe);
+}
+
+.toggle-label::after {
+  content: '';
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  width: 20px;
+  height: 20px;
+  background: white;
+  border-radius: 50%;
+  transition: transform var(--vitesse) var(--courbe);
+}
+
+.visibilite-toggle input:checked + .toggle-label {
+  background: var(--accent);
+}
+
+.visibilite-toggle input:checked + .toggle-label::after {
+  transform: translateX(26px);
+}
+
+.toggle-text {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 10px;
+  font-weight: 700;
+  transition: opacity var(--vitesse) var(--courbe);
+}
+
+.toggle-text:first-child {
+  left: 6px;
+  opacity: 1;
+}
+
+.toggle-text:last-child {
+  right: 6px;
+  opacity: 0;
+}
+
+.visibilite-toggle input:checked + .toggle-label .toggle-text:first-child {
+  opacity: 0;
+}
+
+.visibilite-toggle input:checked + .toggle-label .toggle-text:last-child {
+  opacity: 1;
 }
 
 /* ── ANIMATION D'ENTRÉE DES PAGES ─────────────────────────── */
