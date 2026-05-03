@@ -1,0 +1,477 @@
+/* ═══════════════════════════════════════════════════════════
+   style.css — Styles GLOBAUX de StudyFlow
+   Direction artistique : "Nuit africaine" — fond sombre encre,
+   accents ambre chaud, typographie Sora (ronde, lisible, moderne)
+   ═══════════════════════════════════════════════════════════ */
+
+/* ── POLICE GOOGLE FONTS ──────────────────────────────────── */
+@import url('https://fonts.googleapis.com/css2?family=Sora:wght@300;400;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap');
+
+/* ── VARIABLES CSS — la palette complète ─────────────────── */
+:root {
+  /* Fond */
+  --fond-app:        #0d0f1a;
+  --fond-carte:      #151828;
+  --fond-carte-2:    #1c2038;
+  --fond-input:      #0d0f1a;
+
+  /* Couleurs principales */
+  --accent:          #f5a623;   /* Ambre chaud — couleur signature */
+  --accent-doux:     #f5a62322;
+  --accent-2:        #4ecdc4;   /* Turquoise — secondaire */
+  --accent-2-doux:   #4ecdc420;
+
+  /* Texte */
+  --texte-principal: #eef0f8;
+  --texte-secondaire:#8b90b0;
+  --texte-discret:   #4a4f72;
+
+  /* Bordures */
+  --bordure:         #252a45;
+  --bordure-accent:  #f5a62355;
+
+  /* États */
+  --succes:          #4ecdc4;
+  --danger:          #ff6b6b;
+  --tops:            #4ecdc4;
+  --flops:           #ff6b6b;
+
+  /* Espacements */
+  --rayon:           14px;
+  --rayon-petit:     8px;
+  --rayon-rond:      50px;
+
+  /* Ombres */
+  --ombre:           0 4px 24px rgba(0,0,0,0.4);
+  --ombre-accent:    0 0 20px rgba(245,166,35,0.15);
+
+  /* Transitions */
+  --vitesse:         0.22s;
+  --courbe:          cubic-bezier(0.4, 0, 0.2, 1);
+
+  /* Layout */
+  --hauteur-header:  56px;
+  --hauteur-nav:     68px;
+}
+
+/* ── RESET UNIVERSEL ──────────────────────────────────────── */
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+/* ── BASE ─────────────────────────────────────────────────── */
+html {
+  height: 100%;
+  /* Empêche le rebond iOS au scroll */
+  overscroll-behavior: none;
+}
+
+body {
+  font-family: 'Sora', sans-serif;
+  background-color: var(--fond-app);
+  color: var(--texte-principal);
+  min-height: 100%;
+  font-size: 15px;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+  /* Grain subtil sur le fond pour de la texture */
+  background-image:
+    radial-gradient(ellipse at 20% 0%, #1a1f3a 0%, transparent 60%),
+    radial-gradient(ellipse at 80% 100%, #0f1525 0%, transparent 60%);
+}
+
+/* ── UTILITAIRES : AFFICHAGE/MASQUAGE ─────────────────────── */
+/*
+  Principe : JavaScript ajoute/retire ces classes
+  pour afficher ou cacher des éléments.
+*/
+.cachee  { display: none !important; }
+
+/* Un écran = une vue plein-écran (connexion) */
+.ecran {
+  display: none;
+  min-height: 100svh; /* svh = prend en compte la barre du navigateur mobile */
+  align-items: center;
+  justify-content: center;
+  padding: 24px 20px;
+}
+.ecran.actif { display: flex; }
+
+/* Une page = une section à l'intérieur de l'app */
+.page { display: none; }
+.page.active { display: block; }
+
+/* ── STRUCTURE PRINCIPALE DE L'APP ───────────────────────── */
+#app {
+  display: flex;
+  flex-direction: column;
+  height: 100svh;
+  overflow: hidden; /* l'app ne scroll pas globalement */
+}
+
+/* ── EN-TÊTE ──────────────────────────────────────────────── */
+.app-header {
+  height: var(--hauteur-header);
+  min-height: var(--hauteur-header);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 18px;
+  background: rgba(13, 15, 26, 0.92);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--bordure);
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+
+.header-gauche {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.header-logo {
+  font-size: 22px;
+  line-height: 1;
+}
+
+.header-titre {
+  font-weight: 800;
+  font-size: 17px;
+  letter-spacing: -0.3px;
+  color: var(--accent);
+}
+
+.header-droite {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.header-prenom {
+  font-size: 13px;
+  color: var(--texte-secondaire);
+  font-weight: 600;
+}
+
+/* ── CONTENU PRINCIPAL ────────────────────────────────────── */
+.app-contenu {
+  flex: 1;
+  overflow-y: auto;
+  padding: 18px 16px;
+  padding-bottom: calc(var(--hauteur-nav) + 12px);
+  /* Scroll fluide sur iOS */
+  -webkit-overflow-scrolling: touch;
+  scroll-behavior: smooth;
+}
+
+/* Cache la scrollbar mais garde le scroll fonctionnel */
+.app-contenu::-webkit-scrollbar { width: 0; }
+
+/* ── TITRE DE PAGE ────────────────────────────────────────── */
+.page-titre {
+  font-size: 20px;
+  font-weight: 800;
+  margin-bottom: 16px;
+  letter-spacing: -0.4px;
+  color: var(--texte-principal);
+}
+
+/* ── CARTES — le composant de base ───────────────────────── */
+/*
+  Toute l'info est dans des cartes.
+  Chaque carte = un bloc arrondi avec fond légèrement
+  plus clair que le fond principal.
+*/
+.carte {
+  background: var(--fond-carte);
+  border: 1px solid var(--bordure);
+  border-radius: var(--rayon);
+  padding: 16px;
+  margin-bottom: 14px;
+  transition: border-color var(--vitesse) var(--courbe);
+}
+
+.carte:hover {
+  border-color: var(--bordure-accent);
+}
+
+.carte-titre {
+  font-size: 14px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.6px;
+  color: var(--texte-secondaire);
+  margin-bottom: 14px;
+}
+
+.carte-titre.tops  { color: var(--tops); }
+.carte-titre.flops { color: var(--flops); }
+
+.carte-hint {
+  font-size: 12px;
+  color: var(--texte-discret);
+  margin-bottom: 10px;
+  margin-top: -8px;
+}
+
+/* ── BOUTONS ──────────────────────────────────────────────── */
+.btn-primaire {
+  background: var(--accent);
+  color: #0d0f1a;
+  border: none;
+  border-radius: var(--rayon-rond);
+  padding: 12px 22px;
+  font-family: 'Sora', sans-serif;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  width: 100%;
+  transition:
+    background var(--vitesse) var(--courbe),
+    transform var(--vitesse) var(--courbe),
+    box-shadow var(--vitesse) var(--courbe);
+  letter-spacing: 0.2px;
+}
+
+.btn-primaire:hover {
+  background: #fbb840;
+  box-shadow: 0 4px 16px rgba(245,166,35,0.4);
+  transform: translateY(-1px);
+}
+
+.btn-primaire:active {
+  transform: translateY(0);
+  box-shadow: none;
+}
+
+.btn-primaire.btn-petit {
+  width: auto;
+  padding: 10px 16px;
+  font-size: 18px;
+  line-height: 1;
+  border-radius: var(--rayon-petit);
+  flex-shrink: 0;
+}
+
+.btn-discret {
+  background: transparent;
+  border: 1px solid var(--bordure);
+  color: var(--texte-secondaire);
+  border-radius: var(--rayon-petit);
+  padding: 6px 10px;
+  font-family: 'Sora', sans-serif;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all var(--vitesse) var(--courbe);
+}
+
+.btn-discret:hover {
+  border-color: var(--danger);
+  color: var(--danger);
+}
+
+/* ── INPUTS ───────────────────────────────────────────────── */
+input[type="text"],
+input[type="password"] {
+  width: 100%;
+  background: var(--fond-input);
+  border: 1.5px solid var(--bordure);
+  border-radius: var(--rayon-petit);
+  padding: 11px 14px;
+  color: var(--texte-principal);
+  font-family: 'Sora', sans-serif;
+  font-size: 14px;
+  transition: border-color var(--vitesse) var(--courbe);
+  outline: none;
+  /* Empêche le zoom auto sur iOS (font-size >= 16px évite ça) */
+  font-size: 16px;
+}
+
+input[type="text"]::placeholder,
+input[type="password"]::placeholder {
+  color: var(--texte-discret);
+}
+
+input[type="text"]:focus,
+input[type="password"]:focus {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px var(--accent-doux);
+}
+
+/* ── ERREUR ───────────────────────────────────────────────── */
+.erreur {
+  color: var(--danger);
+  font-size: 13px;
+  font-weight: 600;
+  background: rgba(255,107,107,0.1);
+  border: 1px solid rgba(255,107,107,0.3);
+  border-radius: var(--rayon-petit);
+  padding: 10px 14px;
+  margin-bottom: 12px;
+  animation: secousse 0.4s ease;
+}
+
+@keyframes secousse {
+  0%, 100% { transform: translateX(0); }
+  20%       { transform: translateX(-6px); }
+  40%       { transform: translateX(6px); }
+  60%       { transform: translateX(-4px); }
+  80%       { transform: translateX(4px); }
+}
+
+/* ── BADGE (nouveaux messages) ────────────────────────────── */
+.badge {
+  position: absolute;
+  top: 2px;
+  right: 2px;
+  background: var(--danger);
+  color: white;
+  font-size: 10px;
+  font-weight: 700;
+  border-radius: 50%;
+  width: 18px;
+  height: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  animation: pulsation 1.5s ease-in-out infinite;
+}
+
+@keyframes pulsation {
+  0%, 100% { transform: scale(1); }
+  50%       { transform: scale(1.15); }
+}
+
+/* ── NAVIGATION BAS D'ÉCRAN ───────────────────────────────── */
+.app-nav {
+  height: var(--hauteur-nav);
+  min-height: var(--hauteur-nav);
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+  background: rgba(21, 24, 40, 0.97);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border-top: 1px solid var(--bordure);
+  /* Espace pour le trait de geste iOS */
+  padding-bottom: env(safe-area-inset-bottom, 8px);
+}
+
+.nav-btn {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 3px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 8px 4px;
+  position: relative;
+  border-radius: var(--rayon-petit);
+  transition: background var(--vitesse) var(--courbe);
+}
+
+.nav-btn:active {
+  background: var(--accent-doux);
+}
+
+.nav-icone {
+  font-size: 22px;
+  line-height: 1;
+  transition: transform var(--vitesse) var(--courbe);
+}
+
+.nav-label {
+  font-size: 10px;
+  font-weight: 600;
+  color: var(--texte-discret);
+  letter-spacing: 0.3px;
+  transition: color var(--vitesse) var(--courbe);
+}
+
+/* État actif de la nav */
+.nav-btn.active .nav-icone {
+  transform: translateY(-2px) scale(1.1);
+}
+
+.nav-btn.active .nav-label {
+  color: var(--accent);
+}
+
+.nav-btn.active::after {
+  content: '';
+  position: absolute;
+  bottom: -1px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 20px;
+  height: 3px;
+  background: var(--accent);
+  border-radius: 3px 3px 0 0;
+}
+
+/* ── BARRE DE PROGRESSION ─────────────────────────────────── */
+.progression-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--texte-secondaire);
+}
+
+.pourcent {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--accent);
+}
+
+.barre-fond {
+  width: 100%;
+  height: 8px;
+  background: var(--fond-app);
+  border-radius: 50px;
+  overflow: hidden;
+  border: 1px solid var(--bordure);
+}
+
+.barre-remplissage {
+  height: 100%;
+  background: linear-gradient(90deg, var(--accent), var(--accent-2));
+  border-radius: 50px;
+  transition: width 0.6s var(--courbe);
+  /* Effet brillant animé */
+  background-size: 200% 100%;
+  animation: shimmer 2s linear infinite;
+}
+
+@keyframes shimmer {
+  0%   { background-position: 200% center; }
+  100% { background-position: -200% center; }
+}
+
+/* ── ANIMATION D'ENTRÉE DES PAGES ─────────────────────────── */
+.page.active {
+  animation: glisser-bas 0.3s var(--courbe) both;
+}
+
+@keyframes glisser-bas {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}

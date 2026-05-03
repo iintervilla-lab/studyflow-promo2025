@@ -1,0 +1,241 @@
+/* ═══════════════════════════════════════════════════════════
+   todo.css — Page "Mon espace" : To-do list & Habitudes
+   ═══════════════════════════════════════════════════════════ */
+
+/* ── SAISIE DE TÂCHE ──────────────────────────────────────── */
+.todo-saisie {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 14px;
+  align-items: center;
+}
+
+.todo-saisie input {
+  flex: 1;
+}
+
+/* ── LISTE DE TÂCHES ──────────────────────────────────────── */
+.todo-liste {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+/* ── ITEM DE TÂCHE ────────────────────────────────────────── */
+.todo-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 11px 14px;
+  background: var(--fond-app);
+  border: 1px solid var(--bordure);
+  border-radius: var(--rayon-petit);
+  transition:
+    border-color var(--vitesse) var(--courbe),
+    opacity var(--vitesse) var(--courbe),
+    background var(--vitesse) var(--courbe);
+  /* Animation d'entrée pour chaque nouvelle tâche */
+  animation: entree-tache 0.25s var(--courbe) both;
+}
+
+@keyframes entree-tache {
+  from {
+    opacity: 0;
+    transform: translateX(-8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+/* Tâche cochée : visuellement "terminée" */
+.todo-item.terminee {
+  opacity: 0.5;
+  background: transparent;
+  border-color: transparent;
+}
+
+.todo-item.terminee label {
+  text-decoration: line-through;
+  color: var(--texte-discret);
+}
+
+/* ── CHECKBOX PERSONNALISÉE ───────────────────────────────── */
+/*
+  On cache le checkbox natif (moche) et on en
+  crée un beau avec CSS pur.
+*/
+.todo-item input[type="checkbox"] {
+  appearance: none;
+  -webkit-appearance: none;
+  width: 20px;
+  height: 20px;
+  min-width: 20px;
+  border: 2px solid var(--bordure);
+  border-radius: 6px;
+  cursor: pointer;
+  transition:
+    border-color var(--vitesse) var(--courbe),
+    background var(--vitesse) var(--courbe);
+  position: relative;
+  flex-shrink: 0;
+}
+
+.todo-item input[type="checkbox"]:checked {
+  background: var(--accent);
+  border-color: var(--accent);
+}
+
+/* La coche ✓ dessinée en CSS */
+.todo-item input[type="checkbox"]:checked::after {
+  content: '';
+  position: absolute;
+  top: 2px;
+  left: 6px;
+  width: 5px;
+  height: 9px;
+  border: 2px solid #0d0f1a;
+  border-top: none;
+  border-left: none;
+  transform: rotate(45deg);
+}
+
+/* ── LABEL DE TÂCHE ───────────────────────────────────────── */
+.todo-item label {
+  flex: 1;
+  font-size: 14px;
+  color: var(--texte-principal);
+  cursor: pointer;
+  transition: color var(--vitesse) var(--courbe);
+  /* Évite que le texte déborde */
+  word-break: break-word;
+}
+
+/* ── BOUTON SUPPRIMER ─────────────────────────────────────── */
+.todo-supprimer {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 15px;
+  opacity: 0;
+  padding: 4px;
+  border-radius: var(--rayon-petit);
+  transition: opacity var(--vitesse), background var(--vitesse);
+  flex-shrink: 0;
+}
+
+/* Le bouton supprimer apparaît au survol de l'item */
+.todo-item:hover .todo-supprimer {
+  opacity: 1;
+}
+
+.todo-supprimer:hover {
+  background: rgba(255,107,107,0.15);
+}
+
+/* Sur mobile (pas de hover), toujours visible */
+@media (hover: none) {
+  .todo-supprimer { opacity: 0.5; }
+}
+
+/* ── MESSAGE "LISTE VIDE" ─────────────────────────────────── */
+.todo-vide {
+  text-align: center;
+  padding: 20px;
+  color: var(--texte-discret);
+  font-size: 13px;
+}
+
+.todo-vide::before {
+  content: '🎯';
+  display: block;
+  font-size: 28px;
+  margin-bottom: 6px;
+}
+
+/* ── HABITUDES — GRILLE ───────────────────────────────────── */
+/*
+  Les habitudes s'affichent en grille 2 colonnes.
+  Chaque habitude est une carte "pill" à cocher.
+*/
+.habitudes-grille {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+
+/* ── ITEM D'HABITUDE ──────────────────────────────────────── */
+.habitude-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 14px 10px;
+  background: var(--fond-app);
+  border: 1.5px solid var(--bordure);
+  border-radius: var(--rayon);
+  cursor: pointer;
+  transition:
+    border-color var(--vitesse) var(--courbe),
+    background var(--vitesse) var(--courbe),
+    transform var(--vitesse) var(--courbe);
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+  /* Tap area confortable sur mobile */
+  min-height: 80px;
+}
+
+.habitude-item:active {
+  transform: scale(0.96);
+}
+
+.habitude-icone {
+  font-size: 26px;
+  line-height: 1;
+  transition: transform var(--vitesse) var(--courbe);
+}
+
+.habitude-nom {
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--texte-secondaire);
+  letter-spacing: 0.3px;
+  text-transform: uppercase;
+}
+
+/* État : habitude cochée */
+.habitude-item.cochee {
+  border-color: var(--accent);
+  background: var(--accent-doux);
+}
+
+.habitude-item.cochee .habitude-icone {
+  transform: scale(1.15);
+}
+
+.habitude-item.cochee .habitude-nom {
+  color: var(--accent);
+}
+
+/* Coche verte dans le coin */
+.habitude-item.cochee::after {
+  content: '✓';
+  position: absolute;
+  top: 6px;
+  right: 8px;
+  font-size: 11px;
+  font-weight: 800;
+  color: var(--accent);
+}
+
+/* Animation d'entrée des habitudes en décalé */
+.habitude-item:nth-child(1) { animation: entree-tache 0.2s 0.05s both; }
+.habitude-item:nth-child(2) { animation: entree-tache 0.2s 0.10s both; }
+.habitude-item:nth-child(3) { animation: entree-tache 0.2s 0.15s both; }
+.habitude-item:nth-child(4) { animation: entree-tache 0.2s 0.20s both; }
+.habitude-item:nth-child(5) { animation: entree-tache 0.2s 0.25s both; }
+.habitude-item:nth-child(6) { animation: entree-tache 0.2s 0.30s both; }

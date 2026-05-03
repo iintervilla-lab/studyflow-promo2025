@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <!-- Essentiel pour mobile : la page prend toute la largeur de l'écran -->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <title>StudyFlow — Groupe</title>
+
+  <!-- ═══════════════════════════════════════════
+       PWA : rend l'appli installable sur téléphone
+  ════════════════════════════════════════════════ -->
+  <link rel="manifest" href="manifest.json" />
+  <meta name="theme-color" content="#1a1a2e" />
+  <!-- iOS : affichage plein écran si ajouté à l'écran d'accueil -->
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+
+  <!-- ═══════════════════════════════════════════
+       ICÔNE (emoji en attendant une vraie icône)
+  ════════════════════════════════════════════════ -->
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🎓</text></svg>" />
+
+  <!-- ═══════════════════════════════════════════
+       CSS — chargés dans l'ordre logique
+  ════════════════════════════════════════════════ -->
+  <link rel="stylesheet" href="css/style.css" />   <!-- Base -->
+  <link rel="stylesheet" href="css/auth.css" />    <!-- Connexion -->
+  <link rel="stylesheet" href="css/todo.css" />    <!-- To-do & habitudes -->
+  <link rel="stylesheet" href="css/groupe.css" />  <!-- Page groupe -->
+  <link rel="stylesheet" href="css/chat.css" />    <!-- Chat -->
+</head>
+
+<body>
+
+  <!-- ╔══════════════════════════════════════════╗
+       ║   ÉCRAN 1 : CONNEXION                    ║
+       ║   Visible au démarrage, caché après      ║
+       ╚══════════════════════════════════════════╝ -->
+  <section id="ecran-connexion" class="ecran actif">
+
+    <div class="auth-card">
+      <div class="auth-logo">🎓</div>
+      <h1 class="auth-titre">StudyFlow</h1>
+      <p class="auth-sous-titre">Espace du groupe — Promo 2025</p>
+
+      <!-- Champ : prénom (pour personnaliser l'expérience) -->
+      <div class="champ">
+        <label for="input-prenom">Ton prénom</label>
+        <input
+          id="input-prenom"
+          type="text"
+          placeholder="ex: Koffi"
+          autocomplete="given-name"
+        />
+      </div>
+
+      <!-- Champ : mot de passe commun au groupe -->
+      <div class="champ">
+        <label for="input-mdp">Mot de passe du groupe</label>
+        <input
+          id="input-mdp"
+          type="password"
+          placeholder="••••••••"
+        />
+      </div>
+
+      <!-- Message d'erreur (caché par défaut) -->
+      <p id="auth-erreur" class="erreur cachee">
+        ❌ Mot de passe incorrect. Redemande-le au groupe !
+      </p>
+
+      <button id="btn-connexion" class="btn-primaire">
+        Entrer dans l'espace →
+      </button>
+
+      <p class="auth-hint">💡 Mot de passe par défaut : <strong>promo2025</strong></p>
+    </div>
+
+  </section>
+
+
+  <!-- ╔══════════════════════════════════════════╗
+       ║   SQUELETTE PRINCIPAL (après connexion)  ║
+       ║   Contient la nav + les 3 pages          ║
+       ╚══════════════════════════════════════════╝ -->
+  <div id="app" class="cachee">
+
+    <!-- ── EN-TÊTE ───────────────────────────── -->
+    <header class="app-header">
+      <div class="header-gauche">
+        <span class="header-logo">🎓</span>
+        <span class="header-titre">StudyFlow</span>
+      </div>
+      <div class="header-droite">
+        <!-- Prénom de l'utilisateur connecté -->
+        <span id="header-prenom" class="header-prenom">👋 Salut !</span>
+        <button id="btn-deconnexion" class="btn-discret" title="Se déconnecter">
+          ⬅ Quitter
+        </button>
+      </div>
+    </header>
+
+    <!-- ── CONTENU PRINCIPAL ─────────────────── -->
+    <main class="app-contenu">
+
+      <!-- PAGE 1 : MON ESPACE (to-do + habitudes) -->
+      <section id="page-moi" class="page active">
+
+        <h2 class="page-titre">Mon espace — <span id="prenom-moi"></span></h2>
+
+        <!-- Barre de progression globale -->
+        <div class="carte">
+          <div class="progression-header">
+            <span>📊 Ma progression aujourd'hui</span>
+            <span id="pourcentage-global" class="pourcent">0%</span>
+          </div>
+          <div class="barre-fond">
+            <div id="barre-progression" class="barre-remplissage" style="width:0%"></div>
+          </div>
+        </div>
+
+        <!-- To-do list -->
+        <div class="carte">
+          <h3 class="carte-titre">✅ Ma To-Do List</h3>
+
+          <div class="todo-saisie">
+            <input
+              id="todo-input"
+              type="text"
+              placeholder="Ajouter une tâche..."
+            />
+            <button id="todo-ajouter" class="btn-primaire btn-petit">+</button>
+          </div>
+
+          <!-- Les tâches s'ajoutent ici dynamiquement -->
+          <ul id="todo-liste" class="todo-liste">
+            <!-- Exemple de ce qui sera généré par todo.js :
+            <li class="todo-item">
+              <input type="checkbox" id="tache-0" />
+              <label for="tache-0">Finir le TP de maths</label>
+              <button class="todo-supprimer">🗑</button>
+            </li>
+            -->
+          </ul>
+        </div>
+
+        <!-- Suivi d'habitudes -->
+        <div class="carte">
+          <h3 class="carte-titre">🔥 Mes habitudes du jour</h3>
+
+          <!-- Les habitudes sont fixes mais cochables chaque jour -->
+          <div id="habitudes-liste" class="habitudes-grille">
+            <!-- Générées par todo.js à partir d'une liste prédéfinie -->
+          </div>
+        </div>
+
+      </section>
+
+
+      <!-- PAGE 2 : LE GROUPE (tops et flops) -->
+      <section id="page-groupe" class="page">
+
+        <h2 class="page-titre">👥 Notre groupe</h2>
+
+        <div class="groupe-grille">
+
+          <!-- Colonne TOPS -->
+          <div class="carte">
+            <h3 class="carte-titre tops">🏆 Les Tops</h3>
+            <p class="carte-hint">Ce qui va bien dans le groupe</p>
+            <ul id="liste-tops" class="avis-liste">
+              <!-- Rempli par groupe.js -->
+            </ul>
+            <div class="avis-saisie">
+              <input id="input-top" type="text" placeholder="Un top à partager..." />
+              <button id="btn-ajouter-top" class="btn-tops">Ajouter</button>
+            </div>
+          </div>
+
+          <!-- Colonne FLOPS -->
+          <div class="carte">
+            <h3 class="carte-titre flops">🚨 Les Flops</h3>
+            <p class="carte-hint">Ce qu'on peut améliorer</p>
+            <ul id="liste-flops" class="avis-liste">
+              <!-- Rempli par groupe.js -->
+            </ul>
+            <div class="avis-saisie">
+              <input id="input-flop" type="text" placeholder="Un flop à signaler..." />
+              <button id="btn-ajouter-flop" class="btn-flops">Ajouter</button>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- Classement de progression du groupe -->
+        <div class="carte">
+          <h3 class="carte-titre">📈 Classement progression</h3>
+          <ol id="classement-liste" class="classement">
+            <!-- Rempli par groupe.js -->
+          </ol>
+        </div>
+
+      </section>
+
+
+      <!-- PAGE 3 : CHAT DE GROUPE -->
+      <section id="page-chat" class="page">
+
+        <h2 class="page-titre">💬 Chat du groupe</h2>
+
+        <div class="carte chat-conteneur">
+
+          <!-- Zone d'affichage des messages -->
+          <div id="chat-messages" class="chat-messages">
+            <!-- Rempli par chat.js -->
+            <!-- Exemple de structure :
+            <div class="message message-autre">
+              <span class="message-auteur">Koffi</span>
+              <p class="message-texte">Salut tout le monde !</p>
+              <span class="message-heure">14:32</span>
+            </div>
+            <div class="message message-moi">
+              <span class="message-auteur">Moi</span>
+              <p class="message-texte">Hey ! 👋</p>
+              <span class="message-heure">14:33</span>
+            </div>
+            -->
+          </div>
+
+          <!-- Zone de saisie du message -->
+          <div class="chat-saisie">
+            <input
+              id="chat-input"
+              type="text"
+              placeholder="Écris ton message..."
+              autocomplete="off"
+            />
+            <button id="chat-envoyer" class="btn-primaire">
+              Envoyer ➤
+            </button>
+          </div>
+
+        </div>
+
+      </section>
+
+    </main>
+
+    <!-- ── NAVIGATION BAS D'ÉCRAN (style mobile) ── -->
+    <!--
+      La nav est en bas car c'est une PWA = utilisée sur téléphone.
+      Chaque bouton active la page correspondante.
+    -->
+    <nav class="app-nav">
+      <button class="nav-btn active" data-page="page-moi">
+        <span class="nav-icone">📋</span>
+        <span class="nav-label">Mon espace</span>
+      </button>
+      <button class="nav-btn" data-page="page-groupe">
+        <span class="nav-icone">👥</span>
+        <span class="nav-label">Groupe</span>
+      </button>
+      <button class="nav-btn" data-page="page-chat">
+        <span class="nav-icone">💬</span>
+        <span class="nav-label">Chat</span>
+        <!-- Badge de nouveaux messages -->
+        <span id="chat-badge" class="badge cachee">0</span>
+      </button>
+    </nav>
+
+  </div><!-- fin #app -->
+
+
+  <!-- ═══════════════════════════════════════════
+       JAVASCRIPT — chargé à la fin pour la perf
+       "defer" = attend que le HTML soit lu
+  ════════════════════════════════════════════════ -->
+  <script src="css/js/app.js" defer></script>
+  <script src="css/js/auth.js" defer></script>
+  <script src="css/js/todo.js" defer></script>
+  <script src="css/js/groupe.js" defer></script>
+  <script src="css/js/chat.js" defer></script>
+
+  <!-- Enregistrement du Service Worker (rend l'appli hors-ligne) -->
+  <script>
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker
+          .register('./sw.js')
+          .then(() => console.log('✅ Service Worker actif'))
+          .catch(err => console.warn('⚠️ SW non enregistré :', err));
+      });
+    }
+  </script>
+
+</body>
+</html>

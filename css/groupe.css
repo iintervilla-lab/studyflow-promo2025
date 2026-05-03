@@ -1,0 +1,191 @@
+/* ═══════════════════════════════════════════════════════════
+   groupe.css — Page "Notre groupe" : Tops, Flops, Classement
+   ═══════════════════════════════════════════════════════════ */
+
+/* ── GRILLE TOPS / FLOPS ──────────────────────────────────── */
+/* 2 colonnes côte à côte sur écran, empilées sur petit mobile */
+.groupe-grille {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin-bottom: 14px;
+}
+
+/* Sur très petit écran, on empile */
+@media (max-width: 340px) {
+  .groupe-grille { grid-template-columns: 1fr; }
+}
+
+/* ── LISTE D'AVIS (tops ou flops) ────────────────────────── */
+.avis-liste {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+  margin-bottom: 12px;
+  min-height: 40px; /* espace même si vide */
+}
+
+/* ── ITEM D'AVIS ──────────────────────────────────────────── */
+.avis-item {
+  font-size: 13px;
+  padding: 9px 12px;
+  background: var(--fond-app);
+  border-radius: var(--rayon-petit);
+  color: var(--texte-principal);
+  line-height: 1.4;
+  border-left: 3px solid transparent;
+  word-break: break-word;
+  animation: entree-tache 0.25s var(--courbe) both;
+}
+
+/* La bordure de couleur distingue tops des flops */
+.avis-item.top  { border-left-color: var(--tops); }
+.avis-item.flop { border-left-color: var(--flops); }
+
+/* Auteur (prénom) en petit */
+.avis-auteur {
+  display: block;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.4px;
+  text-transform: uppercase;
+  margin-bottom: 3px;
+}
+
+.avis-item.top  .avis-auteur { color: var(--tops); }
+.avis-item.flop .avis-auteur { color: var(--flops); }
+
+/* ── SAISIE D'AVIS ────────────────────────────────────────── */
+.avis-saisie {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.avis-saisie input {
+  font-size: 13px;
+  padding: 9px 12px;
+}
+
+/* Boutons "Ajouter" colorés selon le type */
+.btn-tops,
+.btn-flops {
+  border: none;
+  border-radius: var(--rayon-petit);
+  padding: 9px 14px;
+  font-family: 'Sora', sans-serif;
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+  width: 100%;
+  transition:
+    filter var(--vitesse) var(--courbe),
+    transform var(--vitesse) var(--courbe);
+  letter-spacing: 0.3px;
+}
+
+.btn-tops {
+  background: rgba(78,205,196,0.15);
+  color: var(--tops);
+  border: 1px solid rgba(78,205,196,0.3);
+}
+
+.btn-flops {
+  background: rgba(255,107,107,0.12);
+  color: var(--flops);
+  border: 1px solid rgba(255,107,107,0.25);
+}
+
+.btn-tops:hover  { filter: brightness(1.2); transform: translateY(-1px); }
+.btn-flops:hover { filter: brightness(1.2); transform: translateY(-1px); }
+
+/* ── CLASSEMENT ───────────────────────────────────────────── */
+.classement {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.classement-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 14px;
+  background: var(--fond-app);
+  border: 1px solid var(--bordure);
+  border-radius: var(--rayon-petit);
+  transition: border-color var(--vitesse);
+  animation: entree-tache 0.3s var(--courbe) both;
+}
+
+/* Décalage visuel selon le rang */
+.classement-item:nth-child(1) { animation-delay: 0.05s; }
+.classement-item:nth-child(2) { animation-delay: 0.10s; }
+.classement-item:nth-child(3) { animation-delay: 0.15s; }
+
+/* Le podium : top 3 avec bordures colorées */
+.classement-item:nth-child(1) {
+  border-color: rgba(255, 215, 0, 0.4);
+  background: rgba(255, 215, 0, 0.04);
+}
+.classement-item:nth-child(2) {
+  border-color: rgba(192, 192, 192, 0.3);
+}
+.classement-item:nth-child(3) {
+  border-color: rgba(205, 127, 50, 0.3);
+}
+
+/* Numéro de rang */
+.classement-rang {
+  font-size: 16px;
+  font-weight: 800;
+  width: 28px;
+  text-align: center;
+  flex-shrink: 0;
+}
+
+/* Nom de l'étudiant */
+.classement-nom {
+  flex: 1;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--texte-principal);
+}
+
+/* Mini-barre de progression inline */
+.classement-barre-fond {
+  width: 60px;
+  height: 6px;
+  background: var(--fond-carte-2);
+  border-radius: 50px;
+  overflow: hidden;
+  flex-shrink: 0;
+}
+
+.classement-barre-fill {
+  height: 100%;
+  border-radius: 50px;
+  background: linear-gradient(90deg, var(--accent), var(--accent-2));
+  transition: width 0.8s var(--courbe);
+}
+
+/* Score en % */
+.classement-score {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--accent);
+  width: 38px;
+  text-align: right;
+  flex-shrink: 0;
+}
+
+/* Message si classement vide */
+.classement-vide {
+  text-align: center;
+  padding: 16px;
+  color: var(--texte-discret);
+  font-size: 13px;
+}
