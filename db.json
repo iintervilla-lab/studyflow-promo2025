@@ -1,0 +1,23 @@
+{
+  "users": [
+    {
+      "id": "user1",
+      "prenom": "Ahmed",
+      "password": "promo2025",
+      "progressions": {},
+      "chat_history": []
+    }
+  ],
+  "pdfs": [
+    {
+      "id": "pdf1",
+      "title": "Introduction au développement web",
+      "file": "/assets/pdfs/intro_web.pdf"
+    }
+  ],
+  "group_data": {
+    "tops": [],
+    "flops": [],
+    "chat_messages": []
+  }
+}

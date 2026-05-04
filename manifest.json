@@ -1,7 +1,7 @@
 {
   "name": "StudyFlow - Social Habit Tracker",
   "short_name": "StudyFlow",
-  "description": "Application collaborative de suivi d'habitudes pour les équipes.",
+  "description": "Application collaborative de suivi d'habitudes pour les Ã©quipes.",
   "start_url": "./index.html",
   "display": "standalone",
   "orientation": "portrait",

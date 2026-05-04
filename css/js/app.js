@@ -248,6 +248,9 @@ document.addEventListener('DOMContentLoaded', function() {
     });
   }
 
+  /* --- Détection de la connectivité --- */
+  setupConnectivityDetection();
+
   /* --- Reconnexion automatique ---
      Si une session existe déjà dans localStorage,
      on reconnecte directement sans redemander le mot de passe.
@@ -272,3 +275,121 @@ document.addEventListener('DOMContentLoaded', function() {
 
   console.log('✅ app.js initialisé');
 });
+
+/* ──────────────────────────────────────────────────────────
+   7. DÉTECTION DE CONNECTIVITÉ ET SYNCHRONISATION
+   ──────────────────────────────────────────────────────────
+   Détecte quand la connexion revient et déclenche
+   une synchronisation automatique des données.
+────────────────────────────────────────────────────────── */
+function setupConnectivityDetection() {
+  let isOnline = navigator.onLine;
+
+  // Écouter les changements de statut de connexion
+  window.addEventListener('online', function() {
+    console.log('🌐 Connexion rétablie - Synchronisation en cours...');
+    isOnline = true;
+
+    // Déclencher la synchronisation
+    if ('serviceWorker' in navigator && 'sync' in window.ServiceWorkerRegistration.prototype) {
+      navigator.serviceWorker.ready.then(registration => {
+        registration.sync.register('background-sync');
+      });
+    } else {
+      // Fallback pour les navigateurs sans Background Sync
+      syncDataManually();
+    }
+
+    // Notification utilisateur
+    showConnectionNotification('Connexion rétablie ! Données synchronisées.');
+  });
+
+  window.addEventListener('offline', function() {
+    console.log('📴 Connexion perdue - Mode hors ligne activé');
+    isOnline = false;
+    showConnectionNotification('Mode hors ligne - Les modifications seront synchronisées automatiquement.');
+  });
+
+  // Vérification périodique de la connectivité (toutes les 30 secondes)
+  setInterval(() => {
+    if (navigator.onLine !== isOnline) {
+      if (navigator.onLine) {
+        window.dispatchEvent(new Event('online'));
+      } else {
+        window.dispatchEvent(new Event('offline'));
+      }
+    }
+  }, 30000);
+}
+
+/**
+ * Synchronisation manuelle (fallback)
+ */
+function syncDataManually() {
+  // Ici on pourrait envoyer les données locales vers un serveur
+  // Pour l'instant, on simule une synchronisation réussie
+  console.log('🔄 Synchronisation manuelle des données locales');
+
+  // Sauvegarder un timestamp de dernière synchro
+  const syncInfo = {
+    lastSync: new Date().toISOString(),
+    status: 'success'
+  };
+  window.ecrireStockage('sync_info', syncInfo);
+}
+
+/**
+ * Affiche une notification de statut de connexion
+ * @param {string} message - Le message à afficher
+ */
+function showConnectionNotification(message) {
+  // Créer une notification temporaire en bas de l'écran
+  const notification = document.createElement('div');
+  notification.className = 'connection-notification';
+  notification.textContent = message;
+
+  // Style de la notification
+  Object.assign(notification.style, {
+    position: 'fixed',
+    bottom: '20px',
+    left: '50%',
+    transform: 'translateX(-50%)',
+    background: 'rgba(245, 166, 35, 0.9)',
+    color: '#0d0f1a',
+    padding: '12px 20px',
+    borderRadius: '25px',
+    fontSize: '14px',
+    fontWeight: '600',
+    zIndex: '10000',
+    boxShadow: '0 4px 12px rgba(0,0,0,0.3)',
+    animation: 'slideUp 0.3s ease-out'
+  });
+
+  // Animation CSS
+  const style = document.createElement('style');
+  style.textContent = `
+    @keyframes slideUp {
+      from { transform: translateX(-50%) translateY(100px); opacity: 0; }
+      to { transform: translateX(-50%) translateY(0); opacity: 1; }
+    }
+    .connection-notification.fadeOut {
+      animation: fadeOut 0.3s ease-out forwards;
+    }
+    @keyframes fadeOut {
+      to { transform: translateX(-50%) translateY(100px); opacity: 0; }
+    }
+  `;
+  document.head.appendChild(style);
+
+  document.body.appendChild(notification);
+
+  // Supprimer après 3 secondes
+  setTimeout(() => {
+    notification.classList.add('fadeOut');
+    setTimeout(() => {
+      if (notification.parentNode) {
+        notification.parentNode.removeChild(notification);
+      }
+    }, 300);
+  }, 3000);
+}

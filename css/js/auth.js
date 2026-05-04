@@ -11,7 +11,54 @@
    Le mot de passe est défini ici en une seule ligne.
    Pour le changer : modifie uniquement cette constante.
 ────────────────────────────────────────────────────────── */
+const API_BASE_URL = 'http://localhost:3000';
 const MOT_DE_PASSE_GROUPE = 'promo2025';
+
+/**
+ * Fonction utilitaire pour les appels API.
+ * @param {string} url - Chemin de l'API (ex: '/users')
+ * @param {object} options - Options fetch (method, headers, body)
+ * @returns {Promise<any>} La réponse JSON de l'API
+ */
+async function apiFetch(url, options = {}) {
+  try {
+    const response = await fetch(`${API_BASE_URL}${url}`, options);
+    if (!response.ok) {
+      const errorData = await response.json().catch(() => ({ message: response.statusText }));
+      throw new Error(`Erreur API: ${response.status} - ${errorData.message || 'Requête échouée'}`);
+    }
+    return response.json();
+  } catch (error) {
+    console.error('Erreur dans apiFetch:', error);
+    throw error;
+  }
+}
+
+async function verifierConnexion(prenom, password) {
+  if (navigator.onLine) {
+    try {
+      const result = await apiFetch('/api/auth/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ prenom, password })
+      });
+      return result.user || { prenom };
+    } catch (error) {
+      console.warn('Connexion backend impossible, utilisation du fallback local.', error);
+      return verifierConnexionLocal(prenom, password);
+    }
+  }
+
+  return verifierConnexionLocal(prenom, password, true);
+}
+
+function verifierConnexionLocal(prenom, password, offline = false) {
+  const mdpCorrect = password.trim().toLowerCase() === MOT_DE_PASSE_GROUPE.toLowerCase();
+  if (!mdpCorrect) {
+    throw new Error(offline ? 'Connexion hors ligne impossible : mot de passe incorrect' : 'Mot de passe incorrect.');
+  }
+  return { prenom, offline: !!offline };
+}
 
 /*
   Nombre maximum de tentatives avant blocage temporaire.
@@ -109,7 +156,7 @@ function setEtatBouton(actif, texte) {
    clique sur le bouton ou appuie sur Entrée.
 ────────────────────────────────────────────────────────── */
 
-function tenterConnexion() {
+async function tenterConnexion() {
 
   /* --- a) Vérifier si le compte est temporairement bloqué --- */
   const maintenant = Date.now();
@@ -144,60 +191,47 @@ function tenterConnexion() {
     return;
   }
 
-  /* --- d) Vérifier le mot de passe ---
-     On compare en minuscules pour être indulgent
-     (évite les erreurs de casse : "Promo2025" = "promo2025")
-  */
-  const mdpCorrect = mdpSaisi.trim().toLowerCase() === MOT_DE_PASSE_GROUPE.toLowerCase();
+  /* --- d) Vérifier le mot de passe via le backend --- */
+  setEtatBouton(false, '✓ Connexion...');
+  let utilisateur;
 
-  if (!mdpCorrect) {
+  try {
+    utilisateur = await verifierConnexion(prenom, mdpSaisi);
+  } catch (error) {
     nombreTentatives++;
-
-    /* Calculer les tentatives restantes avant blocage */
     const restantes = MAX_TENTATIVES - nombreTentatives;
 
     if (restantes <= 0) {
-      /* Bloquer pendant 30 secondes */
       bloquéJusquA = Date.now() + DUREE_BLOCAGE_MS;
-      nombreTentatives = 0; /* Réinitialiser pour le prochain cycle */
+      nombreTentatives = 0;
       afficherErreur('🚫 Trop de tentatives. Attends 30 secondes.');
       setEtatBouton(false, '⏳ Attends...');
 
-      /* Débloquer automatiquement après 30s */
       setTimeout(() => {
         bloquéJusquA = 0;
         setEtatBouton(true, 'Entrer dans l\'espace →');
         cacherErreur();
       }, DUREE_BLOCAGE_MS);
-
     } else if (restantes === 1) {
-      afficherErreur(`❌ Mot de passe incorrect. Dernière tentative !`);
+      afficherErreur(`❌ ${error.message || 'Mot de passe incorrect.'} Dernière tentative !`);
     } else {
-      afficherErreur(`❌ Mot de passe incorrect. (${restantes} essais restants)`);
+      afficherErreur(`❌ ${error.message || 'Mot de passe incorrect.'} (${restantes} essais restants)`);
     }
 
-    /* Vider le champ et remettre le focus dessus */
     if (inputMdp) {
       inputMdp.value = '';
       inputMdp.focus();
     }
+
     return;
   }
 
-  /* ─── CONNEXION RÉUSSIE ─────────────────────────────────── */
-
-  /* Réinitialiser le compteur d'erreurs */
   nombreTentatives = 0;
   cacherErreur();
-
-  /* Retour visuel : le bouton montre que ça charge */
-  setEtatBouton(false, '✓ Connexion...');
-
-  /* Sauvegarder la session dans localStorage
-     (permet la reconnexion automatique au prochain visit) */
   window.ecrireStockage(window.CLES.SESSION, {
-    prenom: prenom,
+    prenom: utilisateur.prenom,
     dateConnexion: Date.now(),
+    online: navigator.onLine
   });
 
   /* Petit délai pour que l'animation du bouton soit visible
