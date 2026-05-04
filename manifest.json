@@ -1,9 +1,31 @@
 {
-  "name": "StudyFlow",
+  "name": "StudyFlow - Social Habit Tracker",
   "short_name": "StudyFlow",
+  "description": "Application collaborative de suivi d'habitudes pour les équipes.",
   "start_url": "./index.html",
   "display": "standalone",
+  "orientation": "portrait",
   "background_color": "#0d0f1a",
   "theme_color": "#f5a623",
-  "icons": []
+  "lang": "fr",
+  "scope": "./",
+  "icons": [
+    {
+      "src": "./icons/icon-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "./icons/icon-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ],
+  "shortcuts": [
+    { "name": "Mon espace", "url": "./index.html?page=moi", "icons": [{ "src": "./icons/icon-192x192.png", "sizes": "192x192" }] },
+    { "name": "Groupe", "url": "./index.html?page=groupe", "icons": [{ "src": "./icons/icon-192x192.png", "sizes": "192x192" }] },
+    { "name": "Chat", "url": "./index.html?page=chat", "icons": [{ "src": "./icons/icon-192x192.png", "sizes": "192x192" }] }
+  ]
 }
